@@ -31,3 +31,12 @@ Thumbs.db
 # Editor
 .idea/
 *.swp
+
+# Regenerable PDF page renders and text dumps (scripts/render_pdf_pages.py).
+# Conclusions belong in wiki/papers/<paper>.md, not here.
+figure_analysis/
+
+# Local agent settings
+.claude/settings.local.json
+
+# Not open access (list non-open-access PDFs in raw/ by name here)

@@ -8,6 +8,7 @@ Format:
 ## [YYYY-MM-DD] query | Question summary
 ## [YYYY-MM-DD] draft | Section updated
 ## [YYYY-MM-DD] lint | pass
+## [YYYY-MM-DD] grill | Decision topic
 ```
 
 ---
