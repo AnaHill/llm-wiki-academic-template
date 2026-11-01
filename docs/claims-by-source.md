@@ -16,7 +16,7 @@ Claims (tick `[x]` when you have checked the claim against the source):
 - [ ] (2) [Related Work] it reports a 20 % improvement over baseline Y.
 -->
 
-## Claims that rest on the author's own synthesis or are not cited
+## Register of the author's own inferences
 
 The single register of the author's own inferences in `main.md`; the paper itself does not label them.
 

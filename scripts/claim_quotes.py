@@ -7,7 +7,7 @@ the main.md heading the claim sits in (case-insensitive; `[Intro]` matches "Intr
 separated by commas). For each claim, the sentences of main.md under a matching heading that cite the same source
 (first author's surname and year) are listed below the claim as `    - > sentence — main.md:line` sub-bullets.
 Only those generated sub-bullets are rewritten; checkbox state, claim text and everything else in the file are kept.
-Sections without a year in the heading (e.g. the register of the author's own synthesis) are left alone.
+Sections without a year in the heading (e.g. the register of the author's own inferences) are left alone.
 
 Usage (run from the repository root):
     python -I scripts/claim_quotes.py                       dry run for all sources: prints the result, writes nothing
@@ -71,7 +71,9 @@ def main_sentences():
         if current is None or not line.strip():
             continue
         if line.lstrip().startswith("|") or fence:
-            result.append((current, number, re.sub(r"\s{2,}", " ", line.strip())))
+            # Mermaid labels use a literal \n for line breaks; it would hide a name that follows it from \b
+            text = line.strip().replace("\\n", " ") if fence else line.strip()
+            result.append((current, number, re.sub(r"\s{2,}", " ", text)))
         else:
             for sentence in split_sentences(line.strip()):
                 result.append((current, number, sentence))
