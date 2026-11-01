@@ -21,7 +21,7 @@ The full pattern is described in [llm-wiki.md](llm-wiki.md). Read it when starti
 | `main.md` | Evolving paper draft — single file with IMRaD sections as `#` headings. |
 | `notes.md` | The researcher's own thinking — read-only for you (see "Researcher notes" below). |
 | `docs/` | Process documentation, not part of the wiki: `claims-by-source.md` (claim register), literature search records, other process notes. |
-| `scripts/` | Helper scripts: `check.py` (consistency check, see "Finishing check"), `render_pdf_pages.py` (PDF text dump and page-to-PNG rendering; needs PyMuPDF), `claim_quotes.py` (lists the sentences of `main.md` that cite each source under that source's claims in `docs/claims-by-source.md`; dry run by default). |
+| `scripts/` | Helper scripts: `check.py` (consistency check, see "Finishing check"), `render_pdf_pages.py` (PDF text dump and page-to-PNG rendering; needs PyMuPDF), `claim_quotes.py` (lists the sentences of `main.md` that cite each source under that source's claims in `docs/claims-by-source.md`; dry run by default), `check_abbreviations.py` (checks the `# Abbreviations` list of `main.md`: every abbreviation listed, spelled out at first use, none unused). |
 | `skills/` | Agent skill definitions (Claude Code skill format), kept for reference. |
 | `.claude/skills/` | Skills Claude Code loads: `grill-paper` (see "Grill before deciding"). |
 | `figure_analysis/` | Regenerable PDF text dumps and page renders (git-ignored). |
@@ -131,6 +131,8 @@ Links to related wiki pages.
 ```
 
 **No stray tags.** If the wiki is read in Obsidian, a `#word` in prose becomes a tag. Tags belong only in the `tags:` front matter. Whenever a hash-prefixed identifier appears in text and is not meant as a tag (for example a catalogue number such as `\#AB01`), write the hash with a backslash escape, as in `\#AB01`, so it displays as "#AB01" without becoming a tag. This applies to every markdown file, including `wiki/log.md` and `main.md` (Pandoc prints the escaped hash without the backslash). `scripts/check.py` warns about unescaped hashes.
+
+**Abbreviations and italics in `main.md`.** Every abbreviation is spelled out at its first use in the running text and listed under `# Abbreviations` (after the Abstract); names of tools, databases, genes and the like are not abbreviations (add them to `IGNORE` in `scripts/check_abbreviations.py`). Abbreviations are not italicised. Italics are used for gene names and for symbols as the field requires; symbols with subscripts are written with `<sub>`; follow the target journal if it differs. Run `python -I scripts/check_abbreviations.py` after editing `main.md`.
 
 **Index format:** Each entry in `wiki/index.md` should include a link, a one-line summary, and optionally metadata (year, venue). Organize by the categories defined in `wiki/index.md`.
 

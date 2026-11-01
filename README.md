@@ -30,7 +30,7 @@ Each paper gets its own isolated repo. Edit `AGENTS.md` to tailor the wiki schem
 3. When ready to write: open `main.md`, select a section, and say e.g. **"write the introduction"**.
 4. After changes, the agent runs `python -I scripts/check.py`; you can run it yourself at any time.
 
-Requirements for the scripts: Python 3; `render_pdf_pages.py` also needs [PyMuPDF](https://pymupdf.readthedocs.io/) (`pip install pymupdf`). `check.py` and `claim_quotes.py` use the standard library only.
+Requirements for the scripts: Python 3; `render_pdf_pages.py` also needs [PyMuPDF](https://pymupdf.readthedocs.io/) (`pip install pymupdf`). `check.py`, `claim_quotes.py` and `check_abbreviations.py` use the standard library only.
 
 ---
 
@@ -103,7 +103,8 @@ notes.md           your own notes (the agent does not edit it)
 docs/
   claims-by-source.md  claim register: claims per source, plus the author's own inferences
 scripts/           check.py (consistency check), claim_quotes.py (claims ↔ draft sentences),
-                   render_pdf_pages.py (PDF text dump and page images)
+                   render_pdf_pages.py (PDF text dump and page images),
+                   check_abbreviations.py (abbreviation list ↔ draft)
 .claude/skills/    grill-paper (/grill-paper): interview before a decision
 skills/
   karpathy-guidelines/  behavioral guidelines for the LLM (reference)

@@ -9,6 +9,10 @@ author: "Author Name"
 
 *[To be written — typically last. Ask: "draft the abstract based on the current draft."]*
 
+# Abbreviations
+
+*[One entry per line, e.g. `- **MEA**: multielectrode array`; checked by scripts/check_abbreviations.py.]*
+
 # Introduction
 
 *[To be written. Should establish the research context, identify the gap (see wiki/index.md, Research Gaps), and state the contribution.]*
