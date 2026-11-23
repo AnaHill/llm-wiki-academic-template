@@ -18,5 +18,24 @@ Claims (tick `[x]` when you have checked the claim against the source):
 
 ## Register of the author's own inferences
 
-The single register of the author's own inferences in `main.md`; the paper itself does not label them.
+These are statements in `main.md` that no single reference supports: generalisations from one or two studies, reasoned steps beyond what any source says, and the author's hypotheses. `main.md` does not mark them in the text, so this list is their only record; every new unsourced statement in `main.md` needs an item here. Tick `[x]` when you have decided that you stand behind the wording.
+
+Reading guide for each item: **bold** = the item's topic and the `main.md` section tag in brackets; **Text:** = the wording in `main.md`, in double quotes (`scripts/claim_quotes.py` reports a quoted wording that `main.md` no longer contains; when the wording changes, update the quote and keep the old one in parentheses as history); **Based on** = the sources behind it; **Support** = where the statement's warrant comes from, one of:
+
+- `sourced` — a source states this directly, and the evidence behind it carries the wording used.
+- `thin` — a source states it, but on one or two studies, so the risk is that it does not generalise.
+- `inference` — no source states it, but it follows by a reasoned step from what sources do state. The risk is in the step, not in the sources: the item can fail although every source is right.
+- `opinion` — a judgement or a preference of the author, not a claim about the world that a source could settle.
+- `none` — no source supports it at all: a hypothesis or an idea of the author's own, and `main.md` says so where it appears.
+- `inherited` — the item summarises other items and takes their support (for example the Highlights).
+
+These are not points on one scale. `thin` is sourced but narrow; `inference` is not sourced as such but derived; they fail in different ways and need different fixes, a better study for the first and a better argument for the second. Every Support line carries at least one of these six values, and `scripts/check.py` warns about a line that carries none or that introduces a seventh; add a value only by editing this list and `SUPPORT_VALUES` in `scripts/check.py`.
+
+<!-- Example item (delete when the first real item is added):
+
+- [ ] **1. [Discussion]** the gap limits comparison between laboratories
+  - **Text:** "this gap plausibly limits comparison between laboratories"
+  - **Based on:** Smith et al. (2023); Lee (2024)
+  - **Support:** `inference` — both report differing definitions; that this limits comparison is the step taken here
+-->
 

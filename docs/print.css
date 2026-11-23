@@ -1,0 +1,128 @@
+/* Print stylesheet for the Zenodo PDF, which is made by printing the exported HTML from a browser.
+   Add it to the HTML before printing, either as <link rel="stylesheet" href="print.css"> next to
+   the file or by pasting the rules into a <style> block in <head>.
+
+   What it cannot do: the running header and footer of the printed page (file name, URL, page
+   numbers) belong to the browser, not to the document. Untick "Headers and footers" in the Chrome
+   or Edge print dialog, under More settings. In Firefox the same option is "Print headers and
+   footers". No CSS rule removes them. */
+
+@page {
+  size: A4;
+  margin: 20mm 18mm;
+}
+
+body {
+  font-size: 11pt;
+  line-height: 1.45;
+  /* The test export produced a 1.5 MB file carrying the editor's dark-theme logic. If the HTML
+     still has a theme class on <body>, force the printed page light so that no grey boxes appear. */
+  background: #fff;
+  color: #000;
+}
+
+/* Keep a figure and the caption above it on one page. In the converted HTML a caption is an
+   italic paragraph immediately before the paragraph holding the image. */
+p:has(> img),
+figure,
+table {
+  break-inside: avoid;
+  page-break-inside: avoid;  /* older engines */
+}
+
+/* The caption paragraph before a figure or a table stays whole and on the same page as what it
+   describes. In the first PDF (2026-11-23) both table captions were left at the foot of the page
+   before their table, and the Figure 2 caption was split over two pages, apart from the figure. */
+p:has(> em):has(+ p > img),
+p:has(> em):has(+ table) {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* A figure must leave room for its caption on the same page: the printable height of A4 with the
+   margins above is 257 mm, and Figure 2 (a tall flowchart) took almost all of it. */
+p > img {
+  max-height: 200mm;
+  object-fit: contain;
+}
+
+/* A heading should not be the last thing on a page. */
+h1, h2, h3, h4 {
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+h1 {
+  break-before: page;
+  page-break-before: page;
+}
+
+/* The title block at the top of main-export.md is an h1; it must not push itself to page 2. */
+body > h1:first-of-type {
+  break-before: auto;
+  page-break-before: auto;
+}
+
+/* Short sections follow the one before them instead of taking a nearly empty page each: the
+   Highlights and Abbreviations after the Abstract, the Acknowledgements and About the author after
+   the Personal note. The main sections still start a new page. */
+h1#highlights,
+h1#abbreviations,
+h1#acknowledgements,
+h1#about-the-author {
+  break-before: auto;
+  page-break-before: auto;
+  margin-top: 1.5em;
+}
+
+/* Table 1 has long cells and Table 2 has five columns; both overflow at body font size. */
+table {
+  width: 100%;
+  font-size: 8.5pt;
+  border-collapse: collapse;
+  table-layout: fixed;
+  word-wrap: break-word;
+}
+
+th, td {
+  border: 1px solid #999;
+  padding: 3px 5px;
+  vertical-align: top;
+}
+
+thead {
+  display: table-header-group;  /* repeat the header when a table does break */
+}
+
+/* Avoid a single line of a paragraph stranded on its own page. */
+p, li, blockquote {
+  orphans: 3;
+  widows: 3;
+}
+
+/* Links stay clickable in the PDF but print as black text rather than blue; the reference list
+   shows the DOI as its own text, so nothing is lost by not printing the URL again. */
+a {
+  color: #000;
+  text-decoration: underline;
+}
+
+/* The reference list reads better with a hanging indent, as APA expects. The references are the
+   paragraphs after the "References" heading; adjust the selector if the converter wraps them. */
+h1#references ~ p,
+h1[id*="reference"] ~ p {
+  padding-left: 2em;
+  text-indent: -2em;
+}
+
+/* Inline formula and code should not be broken across lines. */
+code, .math {
+  white-space: nowrap;
+}

@@ -40,3 +40,15 @@ figure_analysis/
 .claude/settings.local.json
 
 # Not open access (list non-open-access PDFs in raw/ by name here)
+
+# Private drafts (for example blog or social media posts about the project); see AGENTS.md
+docs/private/
+
+# Export build files: main-export.md from scripts/export.py --write, the HTML and PDF made from it
+main-export.md
+main-export.html
+main-export.pdf
+
+# Python bytecode
+__pycache__/
+*.pyc
