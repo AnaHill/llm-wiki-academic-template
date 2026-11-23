@@ -143,7 +143,7 @@ llm-wiki.md        the pattern explained
 - **`[CITATION NEEDED]`** markers in the draft mean the agent couldn't find a supporting source — add the paper and re-ingest.
 - **Check each new source page against the PDF at ingest.** An error caught there is fixed in one place; caught in the draft, it may already be in five.
 - **Non-open-access PDFs:** list them by name in `.gitignore` before committing, if the repo is public.
-- **Graph view** in Foam or Obsidian shows how paper pages link to concept and gap pages — useful for spotting holes in coverage. In Obsidian, filter with `path:wiki -file:index -file:log` and add colour groups in this order: `path:wiki/papers` first, then `path:wiki` (a node takes the colour of the first group it matches).
+- **Graph view** in Obsidian or Foam shows how paper pages link to concept and gap pages — useful for spotting holes in coverage (settings below).
 - **Ask another model family for a review** before publishing: give it `main.md` and `docs/ai-review-brief.md`.
 - **Log decisions, not only changes.** Why a source was left out or a search not run is the first thing you will want to know later.
 - **`wiki/references.md`** is copy-paste ready for submission; specify your citation style if not APA.
@@ -156,11 +156,25 @@ The scripts in `scripts/` are MIT-licensed ([scripts/LICENSE](scripts/LICENSE)).
 
 ---
 
-## Optional: VS Code Foam
+## Optional: a viewer with a graph view (Obsidian or VS Code + Foam)
 
-[Foam](https://foambubble.github.io/foam/) adds a graph view and `[[wikilink]]` navigation on top of this repo. It's not required — the wiki works fine without it.
+The wiki is plain markdown, so any editor works. A viewer with a graph view and clickable `[[wikilinks]]` makes it much easier to see how the sources connect and to follow what the agent changed. Neither is required.
 
-To try it:
+### Obsidian
+
+[Obsidian](https://obsidian.md/) is a free markdown app with a graph view, backlinks and search built in. Open the repository folder as a vault (**Open folder as vault**); nothing needs to be installed in the repository. Keep the agent in a terminal or in VS Code next to it.
+
+- **Graph view filter:** `path:wiki -file:index -file:log`. The index and the log link to almost every page and would turn the graph into one star around them; `-file:log` also drops the archives in `wiki/log-archive/`.
+- **Colour groups, in this order** (a node takes the colour of the first group it matches): `path:wiki/papers` for the paper pages, then `path:wiki` for the concept and method pages. Search syntax: <https://obsidian.md/help/plugins/search>.
+- **Tags:** turn on Tags in the graph filters to see the theme tags as nodes; they come from the Tag vocabulary in `AGENTS.md`. A `#word` in prose would become a tag too, which is why the schema asks for `\#` before a hash that is not one.
+- Obsidian writes its settings to `.obsidian/` in the folder; add it to `.gitignore` if you do not want them in the repository.
+
+The worked example has a highlighted graph and the exact settings behind it: [docs/images/README.md in MEA_review_llm_wiki](https://github.com/AnaHill/MEA_review_llm_wiki/blob/master/docs/images/README.md).
+
+### VS Code + Foam
+
+[Foam](https://foambubble.github.io/foam/) adds a graph view and `[[wikilink]]` navigation inside VS Code.
+
 1. Install the [Foam extension](https://marketplace.visualstudio.com/items?itemName=foam.foam-vscode) from the VS Code marketplace.
 2. Reload the window — Foam will index the `wiki/` files automatically.
 3. Open **Foam: Show Graph** from the command palette to explore link relationships between pages.
