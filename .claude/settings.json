@@ -1,7 +1,9 @@
 {
   "permissions": {
     "deny": [
-      "Edit(/notes.md)"
+      "Edit(/notes.md)",
+      "Read(/.obsidian/**)",
+      "Read(/main-export.*)"
     ],
     "ask": [
       "Edit(raw/**)"
