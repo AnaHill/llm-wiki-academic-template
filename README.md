@@ -64,7 +64,7 @@ Before a non-trivial choice (what a section should claim, which sources to inges
 
 To check the claims cited to one source, type `/grinding <source>` (for example `/grinding Smith`): the agent reads the source in full and reports a verdict per claim in `docs/claims-by-source.md`, with the sentence from `main.md`, the supporting passage and its page, without changing anything.
 
-See [AGENTS.md](AGENTS.md) for the full wiki schema (the agent instructions file) and [llm-wiki.md](llm-wiki.md) for the concept.
+[AGENTS.md](AGENTS.md) holds only what applies to every task (layout, hard rules, the Tag vocabulary, references, logging, the finishing check); the procedures are skills in [.claude/skills/](.claude/skills/): `ingest`, `draft` and `lint`, which Claude Code loads by their description when a task matches, and `grill-paper` and `grinding`, which run only when called. Other agents (Codex and the like) read AGENTS.md, whose table names the skill file to read for each task, so the template does not depend on Claude Code. See [llm-wiki.md](llm-wiki.md) for the concept.
 
 ---
 
@@ -80,11 +80,11 @@ An LLM-maintained wiki can copy one misreading from a summary page into the inde
 
 Most of the work is not prompting but the setup around the agent. Each piece of it in this template was added in the project it comes from because something went wrong without it; [docs/lessons.md there](https://github.com/AnaHill/MEA_review_llm_wiki/blob/master/docs/lessons.md) says what.
 
-- **Instructions:** `AGENTS.md`, one file with one owner.
+- **Instructions:** `AGENTS.md`, one file with one owner, kept short because it goes with every request.
 - **Thin tools:** small scripts in `scripts/`, each doing one mechanical job and returning plain text the agent can read.
-- **Skills that load on demand:** `/grill-paper` and `/grinding`.
+- **Skills that load on demand (progressive disclosure):** the procedures needed only for some tasks live in `.claude/skills/`: `ingest`, `draft` (with the details of the claims file in a reference file of its own, read only when the claims file is edited) and `lint`, and `/grill-paper` and `/grinding`.
 - **Guardrails in the harness, not only in the prompt:** `.claude/settings.json` denies edits to `notes.md`, asks before any write to `raw/`, and runs the abbreviation, consistency and claims checks after every edit of `main.md`.
-- **Rule plus mechanical check:** a rule in `AGENTS.md` alone gets forgotten, and a script alone cannot judge, so each important convention has both. For example, the Draft operation tells the agent to write connections made in `main.md` back to the wiki, and `check.py` lists sources that `main.md` cites in one sentence but the wiki does not connect.
+- **Rule plus mechanical check:** a rule in `AGENTS.md` alone gets forgotten, and a script alone cannot judge, so each important convention has both. For example, the `draft` skill tells the agent to write connections made in `main.md` back to the wiki, and `check.py` lists sources that `main.md` cites in one sentence but the wiki does not connect.
 - **Evaluation:** the claims checklist, ticked by hand against the sources.
 - **Trace:** `wiki/log.md`, with decisions and their reasons, rotated into archives when it grows; `docs/lessons.md` indexes what it taught.
 
@@ -127,10 +127,9 @@ scripts/           check.py (consistency check), claim_quotes.py (claims ↔ dra
                    figures.py (diagrams to .mmd and .svg), export.py (build copy for HTML and PDF),
                    rotate_log.py (log archives); hooks/ holds the main.md hook
 .claude/settings.json  permission rules and the hook
-.claude/skills/    grill-paper (/grill-paper): interview before a decision;
+.claude/skills/    the procedures: ingest, draft, lint (loaded when a task matches);
+                   grill-paper (/grill-paper): interview before a decision;
                    grinding (/grinding <source>): check one source's claims
-skills/
-  karpathy-guidelines/  behavioral guidelines for the LLM (reference)
 AGENTS.md          wiki schema and agent instructions (CLAUDE.md just imports it)
 llm-wiki.md        the pattern explained
 ```
@@ -152,7 +151,7 @@ llm-wiki.md        the pattern explained
 
 ## Licences
 
-The scripts in `scripts/` are MIT-licensed ([scripts/LICENSE](scripts/LICENSE)). `.claude/skills/grill-paper` is adapted from Matt Pocock's `grilling` skill (MIT); `.claude/skills/grinding` is MIT-licensed like the scripts. `skills/karpathy-guidelines` and `llm-wiki.md` come from other authors and keep their own terms.
+The scripts in `scripts/` are MIT-licensed ([scripts/LICENSE](scripts/LICENSE)). `.claude/skills/grill-paper` is adapted from Matt Pocock's `grilling` skill (MIT); the other skills in `.claude/skills/` are MIT-licensed like the scripts. `llm-wiki.md` comes from another author and keeps its own terms.
 
 ---
 

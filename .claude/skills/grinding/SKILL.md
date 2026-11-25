@@ -56,7 +56,7 @@ Never tick a box yourself; ticking is the researcher's decision.
 
 ## When the researcher asks for fixes
 
-Apply only the fixes named. Then, under the Draft rules of AGENTS.md:
+Apply only the fixes named. Then, following the `draft` skill (`.claude/skills/draft/SKILL.md`):
 
 - edit `main.md` surgically, and keep the matching claim in `docs/claims-by-source.md` in step (reword it, note the change and its date; when a claim is dropped or merged, renumber and update every reference to its number, such as the register);
 - fix the wiki page and the Pointers line when they were wrong;

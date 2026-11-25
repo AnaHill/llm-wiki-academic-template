@@ -1,0 +1,39 @@
+---
+name: draft
+description: Write or revise the paper draft main.md - a section, a sentence, a claim, the abstract, the figures or the reference list - and keep docs/claims-by-source.md and the wiki in step with it. Use for any edit to main.md, e.g. "write the introduction", "update the related work", "draft the abstract based on what we have", "rewrite this" on a selected passage, or fixing a claim after a check. Also for edits to docs/claims-by-source.md alone (rewording a claim, adding a register item).
+license: MIT
+---
+
+# Draft
+
+The rules of AGENTS.md apply throughout. Every factual claim in `main.md` must be traceable to a page in `wiki/papers/`.
+
+## Steps
+
+1. **Read `main.md`** to see what is already written, then the wiki pages for the section and any related entries in `notes.md` (cite a note as the researcher's, never as a source).
+2. **Edit only the section asked about**, surgically. If you notice that another section should change, ask before touching it. Do not restructure the file unless asked.
+3. **When correcting a claim, re-read the whole sentence** and rewrite it if needed, not only the wrong part: a correction appended to a sentence can leave its beginning saying the opposite. Then re-read the title, the Highlights (if the paper has them) and the Abstract, which restate claims in their own words and do not change with them.
+4. **Source every claim.** A claim without a source gets `[CITATION NEEDED]`. A statement that is deliberately not sourced — a generalisation over several studies, a reasoned step, the author's hypothesis — is not a missing citation: register it (see "Claims file" below). Do not mark it in the text (no "(the author's reasoning)" labels).
+5. **Write back to the wiki.** When the edit compares sources, gathers a theme or introduces a concept the wiki does not carry yet: add the missing link, with a short reason, to the "See also" of the paper pages involved or to the concept page for the theme; give a recurring theme its own concept page; add a tag to the Tag vocabulary only when it fits at least three pages. `check.py` reports, as INFO, sources cited in one sentence of `main.md` whose pages are not connected (directly or through a concept page that links both), and tags outside the vocabulary as WARN.
+6. **Keep the claims file in step** (below), then run the scripts: `python -I scripts/claim_quotes.py` (read the Notes), `--write`, `python -I scripts/check.py`, `python -I scripts/check_abbreviations.py`.
+7. **Append the log entry** `## [YYYY-MM-DD] draft | <section>`, naming the wiki pages changed in step 5.
+
+**Done when:** the scripts report no ERROR, the claims-file Notes show no claim left without sentences, and the log entry is written.
+
+## Citations and the reference list
+
+In-text citations are APA: (Smith, 2023), (Smith & Jones, 2023), (Smith et al., 2023), several separated by semicolons; narrative: Smith et al. (2023) found… If two cited works have first authors with the same surname, decide once with the researcher whether in-text citations add initials (APA 7) or rely on the year when the years differ, and record the decision in the References rule of AGENTS.md.
+
+The `# References` list follows the References rule of AGENTS.md; `check.py` reports differences and cited-but-unlisted entries as errors. A source that is not yet in `wiki/references.md` is ingested first.
+
+## Abbreviations and italics
+
+Spell out every abbreviation at its first use in the running text and list it under `# Abbreviations` (after the Abstract). Names of tools, databases, genes and the like are not abbreviations (add them to `IGNORE` in `scripts/check_abbreviations.py`). Abbreviations are not italicised. Italics are used for gene names and for symbols as the field requires; symbols with subscripts are written with `<sub>`; follow the target journal where it differs.
+
+## Claims file
+
+`docs/claims-by-source.md` lists every claim of `main.md` per source, and its last section registers the author's own inferences. When a claim changes, reword it there; when a claim is dropped or merged, renumber and update every reference to its number. Every new unsourced statement needs a register item with its wording in `main.md`, the sources it builds on and a **Support** value. Before editing the file, after a structural edit of `main.md` (a new or renamed heading, a new source), when the text is stable enough to rewrite the file, or when the Notes report something, read [claims-file.md](claims-file.md).
+
+## Figures
+
+Figures are fenced ```mermaid blocks in `main.md` with an italic caption line above them (`*Figure 1. ...*`), and they stay there: `claim_quotes.py` reads the blocks as sentences of the draft, so claims can be quoted from inside a diagram; the rendered `figures/*.svg` are for the export only. After changing a diagram, run `python -I scripts/figures.py --render` and look at the images in `figures/`; `check.py` warns until they are in step. `main-export.md` is generated by `scripts/export.py --write`: never edit it, and never put a fix there that belongs in `main.md` (see `docs/export.md`).

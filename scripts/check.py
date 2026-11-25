@@ -83,7 +83,7 @@ for page in sorted(PAPERS.glob("*.md")):
         raw_used.add(f.group(1))
         raw_stem = Path(f.group(1)).stem
         if not raw_stem.startswith(page.stem):
-            report("WARN", where, f"raw file stem '{raw_stem}' differs from page stem '{page.stem}' (rename per AGENTS.md)")
+            report("WARN", where, f"raw file stem '{raw_stem}' differs from page stem '{page.stem}' (rename per the ingest skill)")
     # supplementary files linked anywhere on the page (e.g. a **Supplementary:** line) count as referenced
     raw_used.update(r for r in re.findall(r"\[\[(raw/[^\]|#]+)", text) if (ROOT / r).exists())
     # the first author on the page must be the surname the page and the reference are keyed on;
@@ -200,11 +200,11 @@ for line in body.splitlines():
                     unlinked[(a, b)] = unlinked.get((a, b), 0) + 1
 for (a, b), n in sorted(unlinked.items()):
     report("INFO", "main.md", f"{page_keys[a].stem} and {page_keys[b].stem} are cited in the same sentence "
-           f"({n}x) but their wiki pages do not link each other (write back, AGENTS.md Draft)")
+           f"({n}x) but their wiki pages do not link each other (write back, draft skill step 5)")
 
 # (2) Tags come from the vocabulary in AGENTS.md ("Tag vocabulary"), so the graph groups by theme (WARN).
 agents = ROOT / "AGENTS.md"
-vocab_line = next((l for l in read(agents).splitlines() if l.startswith("**Tag vocabulary.**")), "") if agents.exists() else ""
+vocab_line = next((l for l in read(agents).splitlines() if l.lstrip("- ").startswith("**Tag vocabulary.**")), "") if agents.exists() else ""
 vocab = {t for t in re.findall(r"`([a-z0-9/\-]+)`", vocab_line) if not t.endswith("/")}
 if vocab:
     for p in sorted(WIKI.rglob("*.md")):

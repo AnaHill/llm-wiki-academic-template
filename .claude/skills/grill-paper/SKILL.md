@@ -51,7 +51,7 @@ The session is done when the frontier is empty: every branch visited, nothing le
 
 1. Summarise the settled decisions as a numbered list, each with its reason and its source (wiki page or the researcher's answer).
 2. Ask the researcher to confirm that this is the shared understanding.
-3. After confirmation, offer — do not perform — the follow-up: a `wiki/log.md` entry `## [YYYY-MM-DD] grill | <topic>` with the decision list; for a larger decision (for example a literature search or a source selection) a separate file in `docs/`; and the operation the decisions lead to (Draft, Ingest, Lint fixes), run under its own AGENTS.md rules. Own inferences that will appear in `main.md` go to the register in `docs/claims-by-source.md`, not as labels in the paper.
+3. After confirmation, offer — do not perform — the follow-up: a `wiki/log.md` entry `## [YYYY-MM-DD] grill | <topic>` with the decision list; for a larger decision (for example a literature search or a source selection) a separate file in `docs/`; and the operation the decisions lead to (Draft, Ingest, Lint fixes), run under its own skill (`ingest`, `draft`, `lint`). Own inferences that will appear in `main.md` go to the register in `docs/claims-by-source.md`, not as labels in the paper.
 
 ## When not to use it
 
