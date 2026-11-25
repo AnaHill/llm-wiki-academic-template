@@ -62,7 +62,7 @@ raw/ ──► wiki/papers/ ──► wiki/index.md ──► main.md ──► 
 
 Before a non-trivial choice (what a section should claim, which sources to ingest or cite, which lint findings to fix), type `/grill-paper` (Claude Code): the agent interviews you in rounds, looks up the facts in the wiki itself and leaves the decisions to you.
 
-To check the claims cited to one source, type `/grinding <source>` (for example `/grinding Smith`): the agent reads the source in full and reports a verdict per claim in `docs/claims-by-source.md`, with the sentence from `main.md`, the supporting passage and its page, without changing anything.
+To check the claims cited to one source, type `/grinding <source>` (for example `/grinding Smith`): the agent reads the source in full and reports a verdict per claim in `docs/claims-by-source.md`, with the sentence from `main.md`, the supporting passage and its page, without changing anything. `/grinding wiki <source>` does the same one layer earlier, right after ingest: it checks the source's wiki page and every wiki sentence that cites it, so an error is caught before it is copied into concept pages and the paper; a page the author accepts gets a `**Checked against source:**` date, and `check.py` lists the pages without one.
 
 [AGENTS.md](AGENTS.md) holds only what applies to every task (layout, hard rules, the Tag vocabulary, references, logging, the finishing check); the procedures are skills in [.claude/skills/](.claude/skills/): `ingest`, `draft` and `lint`, which Claude Code loads by their description when a task matches, and `grill-paper` and `grinding`, which run only when called. Other agents (Codex and the like) read AGENTS.md, whose table names the skill file to read for each task, so the template does not depend on Claude Code. See [llm-wiki.md](llm-wiki.md) for the concept.
 
@@ -81,9 +81,9 @@ An LLM-maintained wiki can copy one misreading from a summary page into the inde
 Most of the work is not prompting but the setup around the agent. Each piece of it in this template was added in the project it comes from because something went wrong without it; [docs/lessons.md there](https://github.com/AnaHill/MEA_review_llm_wiki/blob/master/docs/lessons.md) says what.
 
 - **Instructions:** `AGENTS.md`, one file with one owner, kept short because it goes with every request.
-- **Thin tools:** small scripts in `scripts/`, each doing one mechanical job and returning plain text the agent can read.
+- **Thin tools:** small scripts in `scripts/`, each doing one mechanical job and returning plain text the agent can read, plus `eval_skills.py`, which checks with headless Claude Code runs that each task still loads its skill.
 - **Skills that load on demand (progressive disclosure):** the procedures needed only for some tasks live in `.claude/skills/`: `ingest`, `draft` (with the details of the claims file in a reference file of its own, read only when the claims file is edited) and `lint`, and `/grill-paper` and `/grinding`.
-- **Guardrails in the harness, not only in the prompt:** `.claude/settings.json` denies edits to `notes.md`, asks before any write to `raw/`, and runs the abbreviation, consistency and claims checks after every edit of `main.md`.
+- **Guardrails in the harness, not only in the prompt:** `.claude/settings.json` denies edits to `notes.md` and asks before any write to `raw/`, and hooks (`scripts/hooks/harness.py`) run the abbreviation, consistency and claims checks after every edit of `main.md`; report a shell command that changed `notes.md` or a file in `raw/`, which the permission rules do not cover; and, when the agent is about to finish with uncommitted changes in the wiki or the paper, run the finishing check and keep it working on an error.
 - **Rule plus mechanical check:** a rule in `AGENTS.md` alone gets forgotten, and a script alone cannot judge, so each important convention has both. For example, the `draft` skill tells the agent to write connections made in `main.md` back to the wiki, and `check.py` lists sources that `main.md` cites in one sentence but the wiki does not connect.
 - **Evaluation:** the claims checklist, ticked by hand against the sources.
 - **Trace:** `wiki/log.md`, with decisions and their reasons, rotated into archives when it grows; `docs/lessons.md` indexes what it taught.
@@ -125,11 +125,12 @@ scripts/           check.py (consistency check), claim_quotes.py (claims ↔ dra
                    check_abbreviations.py (abbreviation list ↔ draft),
                    render_pdf_pages.py (PDF text dump and page images),
                    figures.py (diagrams to .mmd and .svg), export.py (build copy for HTML and PDF),
-                   rotate_log.py (log archives); hooks/ holds the main.md hook
-.claude/settings.json  permission rules and the hook
+                   rotate_log.py (log archives), eval_skills.py (does each task load its skill);
+                   hooks/harness.py holds the hooks
+.claude/settings.json  permission rules and the hooks
 .claude/skills/    the procedures: ingest, draft, lint (loaded when a task matches);
                    grill-paper (/grill-paper): interview before a decision;
-                   grinding (/grinding <source>): check one source's claims
+                   grinding (/grinding [wiki] <source>): check one source's claims in main.md or the wiki
 AGENTS.md          wiki schema and agent instructions (CLAUDE.md just imports it)
 llm-wiki.md        the pattern explained
 ```

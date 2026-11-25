@@ -1,16 +1,16 @@
 ---
 name: grinding
-description: Check every claim listed for one source in docs/claims-by-source.md against the source itself and report a verdict per claim (holds / check / does not hold) with quotes from main.md and the source, so the researcher can tick the claims. Read-only until the researcher asks for fixes.
-argument-hint: <source, e.g. Smith or "Lee 2026">
+description: Check what is written about one source against the source itself and report a verdict per claim (holds / check / does not hold) with quotes and pages. Two targets - the claims of main.md listed in docs/claims-by-source.md (default), or with "wiki" the source's paper page and every wiki sentence citing it, right after ingest. Read-only until the researcher asks for fixes.
+argument-hint: [wiki] <source, e.g. Smith or "Lee 2026">
 disable-model-invocation: true
 license: MIT
 ---
 
 # Grinding
 
-The researcher's word for the claim-by-claim check of `main.md` against its sources. Read AGENTS.md first; its rules (never invent citations or findings, `notes.md` is read-only, surgical changes) apply throughout.
+The researcher's word for the claim-by-claim check of what is written against its sources. Read AGENTS.md first; its rules (never invent citations or findings, `notes.md` is read-only, surgical changes) apply throughout.
 
-The argument names one source, for example `Smith`, `Lee 2026` or `Park 2025`.
+The argument names one source, for example `Smith`, `Lee 2026` or `Park 2025`. With `wiki` before it (`/grinding wiki Smith`), follow "Wiki mode" below instead of the Steps; the source is read and checked the same way, only the claims come from the wiki.
 
 ## Steps
 
@@ -65,6 +65,17 @@ Apply only the fixes named. Then, following the `draft` skill (`.claude/skills/d
 - append a `wiki/log.md` entry (`draft` when `main.md` changed, otherwise `query`);
 - run `python -I scripts/claim_quotes.py --write`, `python -I scripts/check.py` and, if `main.md` changed, `python -I scripts/check_abbreviations.py`;
 - end with a proposed commit message in the style the researcher uses.
+
+## Wiki mode
+
+The check at the wiki layer, before a claim reaches `main.md`: an error caught on the paper page is not yet copied to the concept pages, the claims file and the paper.
+
+1. **Find the page.** Match the argument to a page in `wiki/papers/`; if several match or none does, ask and stop.
+2. **Collect the claims:** every statement of the paper page about the source (the bibliographic lines, Contribution, Methodology, Findings, Limitations; "Relevance to our paper" only where it states a fact about the source), and every sentence on other wiki pages (concept pages, `wiki/index.md`) that links to the page or cites the source. Number them in that order.
+3. **Read the source in full** and **check each claim** as in steps 3–4 above, the bibliographic lines included: the author order against page 1, the venue, the DOI, and both dates.
+4. **Change nothing.** Report as above, with "Where in the wiki" (page and line) in place of "Where in main.md", and say which sentences of `main.md` repeat a claim that does not hold, so they can be checked next with `/grinding <source>`.
+
+When the researcher asks for fixes, apply only those named, fix the same claim on every wiki page that repeats it, append a `## [YYYY-MM-DD] lint | wiki grinding <source>` log entry and run `python -I scripts/check.py`. When the researcher says the page is checked (their decision, as with ticking), add or update the line `**Checked against source:** YYYY-MM-DD` after the **DOI:** line of the paper page. `check.py` lists the pages without that line, and a page changed in a later commit than its date.
 
 ## When not to use it
 

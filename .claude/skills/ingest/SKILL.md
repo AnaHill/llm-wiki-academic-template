@@ -22,10 +22,12 @@ If the researcher says something like "I added sources to raw/, go check them" w
 6. **Update concept, method and research-gap pages** the source bears on. Link the concept pages that cite the paper from its "See also", and give a short reason after a link to another paper ("— definition A versus definition B"). Two to four tags from the Tag vocabulary.
 7. **Append the reference** to `wiki/references.md` (References rule of AGENTS.md: APA, issue year, both dates on the paper page; do not convert existing entries to another style).
 8. **Add the index line** to `wiki/index.md`, under the categories defined there: link, one-line summary, optionally year and venue.
-9. **Append the log entry** `## [YYYY-MM-DD] ingest | Author Year — Paper Title`, naming the pages touched.
+9. **Append the log entry** `## [YYYY-MM-DD] ingest | Author Year — Paper Title`, naming the pages touched, with a line that records what steps 1–3 actually did (`check.py` warns when it is missing from an ingest entry):
+   `Checks: full text read (or why not) | figures viewed: pages 3, 5 (or none with data) | supplements: read (or none) | authors from page 1 | dates: online-first …, issue … | inconsistencies: none (or where they are recorded)`
 10. **Run `python -I scripts/check.py`** and fix its ERRORs. If the source shares a first-author surname with another source, tell the researcher: the in-text citation rule for that case has to be decided (see "Citations and the reference list" in the `draft` skill), and if the year is the same too, `claim_quotes.py` (which matches a source by surname and year) gives both sources the same sentences until their claims are narrowed with `{q: ...}`.
+11. **Mention `/grinding wiki <source>` once**, at the end of the batch rather than after every source: the check of the new pages and the wiki sentences citing them against the sources, before anything from them reaches `main.md`. Running it, and when, is the researcher's choice; several sources are often added before the wiki is checked.
 
-A single source often touches 5–10 wiki pages. **Done when:** the page, the renamed raw file, the reference, the index line and the log entry exist, and `check.py` reports no ERROR for the source.
+A single source often touches 5–10 wiki pages. **Done when:** the page, the renamed raw file, the reference, the index line and the log entry with its `Checks:` line exist, and `check.py` reports no ERROR for the source.
 
 ## Naming the raw file
 

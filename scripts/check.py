@@ -8,6 +8,9 @@ It cannot verify that author lists or findings are true (that needs the source i
 but it catches structural ways a citation can appear without a source behind it. It also
 reports where main.md has made a connection the wiki lacks (sources cited in one sentence
 whose pages do not link each other) and wiki tags outside the vocabulary in AGENTS.md.
+Two records of checks done by reading are looked for, not verified: the `Checks:` line of an
+ingest log entry (ingest skill) and the `**Checked against source:**` line of a paper page
+(`/grinding wiki`).
 """
 import re
 import sys
@@ -97,6 +100,35 @@ for page in sorted(PAPERS.glob("*.md")):
     d = re.search(r"\*\*DOI:\*\*\s*(\S+)", text)
     if d and refs.get(key) and d.group(1).rstrip(".") != refs[key]:
         report("ERROR", where, f"DOI {d.group(1)} differs from references.md ({refs[key]})")
+# --- paper pages checked against their source (/grinding wiki) ----------------------------
+# The line is written when the researcher accepts a wiki grinding; the date is compared with the
+# page's last commit, so a page edited in a later commit is listed again. One summary line for the
+# pages never checked, so that the many pages ingested before the check existed do not flood the output.
+import subprocess
+last_commit = {}
+try:
+    git_log = subprocess.run(["git", "log", "--format=@%cs", "--name-only", "--", "wiki/papers"], cwd=ROOT,
+                             capture_output=True, text=True, encoding="utf-8").stdout
+    day = None
+    for line in git_log.splitlines():
+        if line.startswith("@"):
+            day = line[1:]
+        elif line.strip():
+            last_commit.setdefault(line.strip(), day)
+except OSError:
+    pass
+unchecked = []
+for page in page_keys.values():
+    c = re.search(r"^\*\*Checked against source:\*\*\s*(\d{4}-\d{2}-\d{2})", read(page), re.M)
+    if not c:
+        unchecked.append(page.stem)
+    elif last_commit.get(rel(page), "") > c.group(1):
+        report("INFO", rel(page), f"changed in a commit of {last_commit[rel(page)]}, after its check against the "
+                                  f"source ({c.group(1)}); consider /grinding wiki again")
+if unchecked:
+    report("INFO", "wiki/papers", f"{len(unchecked)} of {len(page_keys)} pages not yet checked against their source "
+                                  f"(/grinding wiki): {', '.join(sorted(unchecked))}")
+
 for key in refs:
     if key not in page_keys:
         report("ERROR", "wiki/references.md", f"{key[0]} {key[1]} has no page in wiki/papers/")
@@ -231,6 +263,23 @@ for log_path in LOG_FILES:
             m = re.match(r"## \[\d{4}-\d{2}-\d{2}\] (\w+) \| .+", line)
             if not m or m.group(1) not in LOG_TYPES:
                 report("WARN", f"{rel(log_path)}:{i}", f"non-standard log header: {line[:60]}")
+
+# An ingest entry records what was actually read (ingest skill, step 9): a line starting "Checks:"
+# naming the full text, figures, supplements, authors and dates. Required from INGEST_CHECKS_FROM on.
+INGEST_CHECKS_FROM = "2026-11-25"
+INGEST_CHECK_WORDS = ("full text", "figures", "supplements", "authors", "dates")
+for log_path in LOG_FILES:
+    if not log_path.exists():
+        continue
+    for entry in re.split(r"^(?=## \[)", read(log_path), flags=re.M):
+        m = re.match(r"## \[(\d{4}-\d{2}-\d{2})\] ingest \|(.*)", entry)
+        if not m or m.group(1) < INGEST_CHECKS_FROM:
+            continue
+        checks = re.search(r"^\W*Checks:(.*)$", entry, re.M)
+        missing = [w for w in INGEST_CHECK_WORDS if not checks or w not in checks.group(1).lower()]
+        if missing:
+            report("WARN", rel(log_path), f"ingest entry of {m.group(1)} ({m.group(2).strip()[:40]}) has no Checks: line "
+                                          f"naming {', '.join(missing)} (ingest skill, step 9)")
 
 # --- docs/lessons.md: every lesson traceable to the log --------------------------------
 # A lesson cites its evidence as "log <date> <type>", which must match a "## [<date>] <type> |"
